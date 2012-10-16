@@ -2,20 +2,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.tinkerpop.blueprints</groupId>
-        <artifactId>blueprints</artifactId>
-        <version>2.2.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
-    </parent>
+    <groupId>com.tinkerpop.blueprints</groupId>
     <artifactId>blueprints-oracle-nosqldb</artifactId>
+    <version>2.2.0-SNAPSHOT</version>
     <name>Blueprints-Oracle-KV</name>
     <description>Blueprints property graph implementation for the Oracle NoSQL database</description>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <blueprints.version>2.1.0</blueprints.version>
+        <rexster.version>2.1.0</rexster.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>
             <artifactId>blueprints-core</artifactId>
             <version>${blueprints.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tinkerpop.rexster</groupId>
+            <artifactId>rexster-core</artifactId>
+            <version>${rexster.version}</version>
         </dependency>
         <dependency>
         	<groupId>commons-lang</groupId>
@@ -46,7 +52,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <version>4.5</version>
         </dependency>
     </dependencies>
     <build>
@@ -71,6 +77,31 @@
 				<configuration>
                     <argLine>-DtestKVGraph=true -DgraphName=blueprint -DstoreName=kvstore -Dhostname=Daniel-McClarys-MacBook-Pro.local -DhostPort=5000
                     </argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assembly</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <attach>false</attach>
+                    <descriptors>
+                        <descriptor>src/assembly/standalone.xml</descriptor>
+                        <descriptor>src/assembly/distribution.xml</descriptor>
+                    </descriptors>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
+                    <outputDirectory>target</outputDirectory>
+                    <workDirectory>target/assembly/work</workDirectory>
+                    <tarLongFileMode>warn</tarLongFileMode>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                 </configuration>
             </plugin>
         </plugins>
