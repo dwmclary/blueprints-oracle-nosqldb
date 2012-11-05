@@ -137,7 +137,8 @@ public class KVGraph implements MetaGraph<KVStore> {
         {
             vertex = new KVVertex(this);
         }
-        putValue(this.store, keyFromString(this.getGraphKey()+"/VertexIndex/"+vertex.getId()), "");
+        // putValue(this.store, keyFromString(this.getGraphKey()+"/VertexIndex/"+vertex.getId()), "");
+        putValue(this.store, majorKeyFromString(this.getGraphKey()+"/Vertex/"+vertex.getId()), vertex.getId());
         vertex.setProperty("ID", vertex.getId().toString());
         
         return vertex;
@@ -175,7 +176,8 @@ public class KVGraph implements MetaGraph<KVStore> {
         /* use multiDelete to wipe out all properties */
         Key vertexKey = majorKeyFromString(this.getGraphKey()+"/Vertex/"+vertexToRemove.getId());
         this.store.multiDelete(vertexKey, null, Depth.DESCENDANTS_ONLY);
-        this.store.delete(keyFromString(this.getGraphKey()+"/VertexIndex/"+vertexToRemove.getId()));
+        this.store.delete(vertexKey);
+        // this.store.delete(keyFromString(this.getGraphKey()+"/VertexIndex/"+vertexToRemove.getId()));
     }
     /**
      * Return the edge referenced by the provided object identifier.
@@ -246,7 +248,8 @@ public class KVGraph implements MetaGraph<KVStore> {
          /* use multiDelete to wipe out all properties */
          Key edgeKey = majorKeyFromString(this.getGraphKey()+"/Edge/"+edgeToRemove.getId());
          this.store.multiDelete(edgeKey, null, Depth.DESCENDANTS_ONLY);
-         this.store.delete(keyFromString(this.getGraphKey()+"/EdgeIndex/"+edgeToRemove.getId()));
+         this.store.delete(edgeKey);
+         // this.store.delete(keyFromString(this.getGraphKey()+"/EdgeIndex/"+edgeToRemove.getId()));
     }
     
     /**
@@ -291,7 +294,8 @@ public class KVGraph implements MetaGraph<KVStore> {
         	outEdges = new HashSet<String>();
         outEdges.add(edge.getId().toString());
         outVertex.setProperty("OUT", outEdges);
-        putValue(this.store, keyFromString(this.getGraphKey()+"/EdgeIndex/"+edge.getId()), "");
+        // putValue(this.store, keyFromString(this.getGraphKey()+"/EdgeIndex/"+edge.getId()), "");
+        putValue(this.store, majorKeyFromString(this.getGraphKey()+"/Edge/"+edge.getId()), edge.getId());
         return edge;
         
     } 
@@ -305,8 +309,8 @@ public class KVGraph implements MetaGraph<KVStore> {
     {
     	ArrayList<Vertex> vertices = new ArrayList<Vertex>();
     	/* get all immediate children of the graph with Vertex in the major key */
-        Iterator <KeyValueVersion> vertexKeys = this.store.multiGetIterator(oracle.kv.Direction.FORWARD, 0,majorKeyFromString(this.getGraphKey()+"/VertexIndex"), null,null);
-        // Iterator<Key> vertexKeys = this.store.storeKeysIterator(oracle.kv.Direction.UNORDERED, 1,majorKeyFromString(this.getGraphKey()+"/Vertex"), null, Depth.CHILDREN_ONLY);
+        // Iterator <KeyValueVersion> vertexKeys = this.store.multiGetIterator(oracle.kv.Direction.FORWARD, 0,majorKeyFromString(this.getGraphKey()+"/VertexIndex"), null,null);
+        Iterator<KeyValueVersion> vertexKeys = this.store.storeIterator(oracle.kv.Direction.UNORDERED, 1,majorKeyFromString(this.getGraphKey()+"/Vertex"), null, Depth.CHILDREN_ONLY);
 
     	int vcount = 0;
     	
@@ -345,8 +349,8 @@ public class KVGraph implements MetaGraph<KVStore> {
     	ArrayList<Vertex> vertices = new ArrayList<Vertex>();
     	/* get all immediate children of the graph with Vertex in the major key */
         // Iterator <KeyValueVersion> vertexKeys = this.store.multiGetIterator(oracle.kv.Direction.FORWARD, 0,majorKeyFromString(this.getGraphKey()+"/Vertex"), null,null);
-        Iterator <KeyValueVersion> vertexKeys = this.store.multiGetIterator(oracle.kv.Direction.FORWARD, 0,majorKeyFromString(this.getGraphKey()+"/VertexIndex"), null,null);    	
-        // Iterator<Key> vertexKeys = this.store.storeKeysIterator(oracle.kv.Direction.UNORDERED, 0,majorKeyFromString(this.getGraphKey()+"/Vertex"), null, Depth.CHILDREN_ONLY);
+        // Iterator <KeyValueVersion> vertexKeys = this.store.multiGetIterator(oracle.kv.Direction.FORWARD, 0,majorKeyFromString(this.getGraphKey()+"/VertexIndex"), null,null);        
+        Iterator<KeyValueVersion> vertexKeys = this.store.storeIterator(oracle.kv.Direction.UNORDERED, 1,majorKeyFromString(this.getGraphKey()+"/Vertex"), null, Depth.CHILDREN_ONLY);
     	
     	while (vertexKeys.hasNext())
     	{
@@ -377,9 +381,9 @@ public class KVGraph implements MetaGraph<KVStore> {
     {
     	ArrayList<Edge> edges = new ArrayList<Edge>();
     	/* get all immediate children of the graph with Edge in the major key */
-    	Iterator <KeyValueVersion> edgeKeys = this.store.multiGetIterator(oracle.kv.Direction.FORWARD, 0,majorKeyFromString(this.getGraphKey()+"/EdgeIndex"), null,null);
+        // Iterator <KeyValueVersion> edgeKeys = this.store.multiGetIterator(oracle.kv.Direction.FORWARD, 0,majorKeyFromString(this.getGraphKey()+"/EdgeIndex"), null,null);
     	
-        // Iterator<Key> edgeKeys = this.store.storeKeysIterator(oracle.kv.Direction.UNORDERED, 0,majorKeyFromString(this.getGraphKey()+"/Edge"), new KeyRange(null, true, null, true), Depth.CHILDREN_ONLY);
+        Iterator<KeyValueVersion> edgeKeys = this.store.storeIterator(oracle.kv.Direction.UNORDERED, 1,majorKeyFromString(this.getGraphKey()+"/Edge"), null, Depth.CHILDREN_ONLY);
         int ecount = 0;
     	while (edgeKeys.hasNext())
     	{
@@ -409,9 +413,9 @@ public class KVGraph implements MetaGraph<KVStore> {
     {
     	ArrayList<Edge> edges = new ArrayList<Edge>();
     	/* get all immediate children of the graph with Edge in the major key */
-        Iterator <KeyValueVersion> edgeKeys = this.store.multiGetIterator(oracle.kv.Direction.FORWARD, 0,majorKeyFromString(this.getGraphKey()+"/EdgeIndex"), null,null);
+        // Iterator <KeyValueVersion> edgeKeys = this.store.multiGetIterator(oracle.kv.Direction.FORWARD, 0,majorKeyFromString(this.getGraphKey()+"/EdgeIndex"), null,null);
 
-        // Iterator<Key> edgeKeys = this.store.storeKeysIterator(oracle.kv.Direction.UNORDERED, 0,majorKeyFromString(this.getGraphKey()+"/Edge"), new KeyRange(null, true, null, true), Depth.CHILDREN_ONLY);
+        Iterator<KeyValueVersion> edgeKeys = this.store.storeIterator(oracle.kv.Direction.UNORDERED, 0,majorKeyFromString(this.getGraphKey()+"/Edge"), null, Depth.CHILDREN_ONLY);
     	while (edgeKeys.hasNext())
     	{
     		Key ek = edgeKeys.next().getKey();
